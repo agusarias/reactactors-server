@@ -1,0 +1,13 @@
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+sbt
+sbt-dist/
+.history
+.cache
+.lib/
+.idea/
+*.sc
