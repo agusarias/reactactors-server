@@ -30,6 +30,6 @@ object NoPlayer extends Player("-")
 
 object Board {
   val PositionAmount = 9
-  def empty: Board = new Board(List.fill(PositionAmount)(NoPlayer))
+  def empty: Board = new Board(Vector.fill(PositionAmount)(NoPlayer))
 }
-case class Board(positions: List[Player])
+case class Board(positions: Vector[Player])
