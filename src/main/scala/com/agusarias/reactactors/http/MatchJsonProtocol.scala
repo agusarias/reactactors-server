@@ -1,6 +1,7 @@
-package com.agusarias.reactactors
+package com.agusarias.reactactors.http
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import com.agusarias.reactactors.{Board, MatchState, Player}
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsArray, JsString, JsValue, RootJsonFormat}
 
 object MatchJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {

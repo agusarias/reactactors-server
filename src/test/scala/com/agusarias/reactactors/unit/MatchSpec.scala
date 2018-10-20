@@ -1,8 +1,9 @@
-package com.agusarias.reactactors
+package com.agusarias.reactactors.unit
 
 import akka.actor.ActorSystem
 import akka.testkit.{TestKit, TestProbe}
 import akka.util.Timeout
+import com.agusarias.reactactors.Match
 import com.agusarias.reactactors.Match.GetState
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 

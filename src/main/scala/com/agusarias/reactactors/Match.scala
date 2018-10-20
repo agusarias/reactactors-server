@@ -8,6 +8,7 @@ object Match {
 
   sealed trait Message
   object GetState extends Message
+  case class MakeMove(position: Int) extends Message
 
   sealed trait Event
 }

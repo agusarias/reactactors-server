@@ -16,11 +16,9 @@ object Main extends App with MatchRoutes {
   override val matchesSupervisor: ActorRef = system.actorOf(Matches.props, "MatchesSupervisor")
 
   // TODO
-  // - not found
   // - move
   // - calculate winner
   // - delete
-  // - refactor
 
   val routes = matchRoutes
   val bindingFuture = Http().bindAndHandle(routes, "localhost", 8080)

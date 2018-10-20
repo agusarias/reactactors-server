@@ -1,13 +1,14 @@
-package com.agusarias.reactactors
+package com.agusarias.reactactors.unit
 
-import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import akka.actor.{ActorRef, ActorSystem}
 import akka.testkit.{TestKit, TestProbe}
+import akka.util.Timeout
+import com.agusarias.reactactors.Matches
+import com.agusarias.reactactors.Matches._
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
-import akka.util.Timeout
-import com.agusarias.reactactors.Matches._
 
 class MatchesSpec(_system: ActorSystem)
   extends TestKit(_system)
