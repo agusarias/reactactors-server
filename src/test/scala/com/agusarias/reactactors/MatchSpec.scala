@@ -1,9 +1,8 @@
-package com.agusarias.reactactors.unit
+package com.agusarias.reactactors
 
 import akka.actor.ActorSystem
 import akka.testkit.{TestKit, TestProbe}
 import akka.util.Timeout
-import com.agusarias.reactactors.Match
 import com.agusarias.reactactors.Match.GetState
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
@@ -29,7 +28,7 @@ class MatchSpec(_system: ActorSystem)
       val someId = 3
       val aMatch = system.actorOf(Match.props(someId))
       aMatch.tell(GetState, receiver.ref)
-      receiver.expectMsgType[Long](500 millis)
+      receiver.expectMsgType[MatchState](500 millis)
     }
   }
 }

@@ -1,9 +1,8 @@
-package com.agusarias.reactactors.unit
+package com.agusarias.reactactors
 
 import akka.actor.{ActorRef, ActorSystem}
 import akka.testkit.{TestKit, TestProbe}
 import akka.util.Timeout
-import com.agusarias.reactactors.Matches
 import com.agusarias.reactactors.Matches._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
@@ -29,7 +28,7 @@ class MatchesSpec(_system: ActorSystem)
 
       val matches = system.actorOf(Matches.props)
       matches.tell(CreateMatch, receiver.ref)
-      receiver.expectMsg(500 millis, MatchCreated(1))
+      receiver.expectMsgType[ActorRef](500 millis)
     }
 
     "retrieve an existent match" in {

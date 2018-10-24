@@ -13,12 +13,7 @@ object Main extends App with MatchRoutes {
   override implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  override val matchesSupervisor: ActorRef = system.actorOf(Matches.props, "MatchesSupervisor")
-
-  // TODO
-  // - move
-  // - calculate winner
-  // - delete
+  override val matches: ActorRef = system.actorOf(Matches.props, "MatchesSupervisor")
 
   val routes = matchRoutes
   val bindingFuture = Http().bindAndHandle(routes, "localhost", 8080)

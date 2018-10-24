@@ -42,7 +42,7 @@ class Matches() extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case CreateMatch =>
-      sender() ! MatchCreated(createMatch())
+      sender() ! createMatch()
     case GetMatch(id) =>
       sender() ! getMatch(id)
     case GetMatches =>
@@ -59,14 +59,14 @@ class Matches() extends Actor with ActorLogging {
       sender() ! MatchDeleted(id)
   }
 
-  def createMatch(): Long = {
+  def createMatch(): ActorRef = {
     createMatchWithId(nextId)
   }
 
-  def createMatchWithId(newId: Long): Long = {
+  def createMatchWithId(newId: Long): ActorRef = {
     val newMatch = context.actorOf(Match.props(newId))
     state = state.copy(matches = state.matches + (newId -> newMatch))
-    newId
+    newMatch
   }
 
   def deleteMatch(id: Long) {
