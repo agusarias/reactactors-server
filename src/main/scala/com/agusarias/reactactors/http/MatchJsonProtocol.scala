@@ -7,7 +7,7 @@ import spray.json.{DefaultJsonProtocol, DeserializationException, JsArray, JsStr
 object MatchJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
   implicit object PlayerJsonFormat extends RootJsonFormat[Player] {
     def write(p: Player) = JsString(p.niceName)
-    def read(value: JsValue) = Player.of(value.convertTo[String])
+    def read(value: JsValue): Player = Player.of(value.convertTo[String])
   }
   implicit object BoardJsonFormat extends RootJsonFormat[Board] {
     def write(b: Board) =

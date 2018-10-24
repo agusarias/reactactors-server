@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, Props}
 import com.agusarias.reactactors.Match.{GetState, MakeMove}
 
 object Match {
-  def props(id: Long): Props = Props(new Match(MatchState.createForId(id)))
+  def props(code: Long): Props = Props(new Match(MatchState.createForCode(code)))
 
   sealed trait Message
 
@@ -30,16 +30,16 @@ class Match(var state: MatchState) extends Actor with ActorLogging {
 }
 
 object MatchState {
-  def createForId(id: Long): MatchState = MatchState(id, Board.empty, Circle, NoPlayer)
+  def createForCode(code: Long): MatchState = MatchState(code, Board.empty, Circle, NoPlayer)
 }
 
-case class MatchState(id: Long, board: Board, next: Player, winner: Player) {
+case class MatchState(code: Long, board: Board, next: Player, winner: Player) {
   def move(position: Int): MatchState = {
     winner match {
       case NoPlayer =>
         val updatedBoard = board.update(position, next)
         MatchState(
-          id,
+          code,
           updatedBoard,
           next.other,
           updatedBoard.winner)
@@ -48,4 +48,4 @@ case class MatchState(id: Long, board: Board, next: Player, winner: Player) {
   }
 }
 
-class MatchNotFoundException(id: Long) extends Exception(s"Match with id $id not found")
+class MatchNotFoundException(code: Long) extends Exception(s"Match with code $code not found")

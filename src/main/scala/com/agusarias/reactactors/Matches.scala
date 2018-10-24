@@ -19,17 +19,17 @@ object Matches {
 
   object CreateMatch extends Message
 
-  case class GetMatch(id: Long) extends Message
+  case class GetMatch(code: Long) extends Message
 
   object GetMatches extends Message
 
-  case class DeleteMatch(id: Long) extends Message
+  case class DeleteMatch(code: Long) extends Message
 
   sealed trait Event
 
-  case class MatchCreated(id: Long) extends Event
+  case class MatchCreated(code: Long) extends Event
 
-  case class MatchDeleted(id: Long) extends Event
+  case class MatchDeleted(code: Long) extends Event
 
 }
 
@@ -43,8 +43,8 @@ class Matches() extends Actor with ActorLogging {
   override def receive: Receive = {
     case CreateMatch =>
       sender() ! createMatch()
-    case GetMatch(id) =>
-      sender() ! getMatch(id)
+    case GetMatch(code) =>
+      sender() ! getMatch(code)
     case GetMatches =>
       val originalSender = sender()
       val futures: Future[List[MatchState]] = getMatches
@@ -54,9 +54,9 @@ class Matches() extends Actor with ActorLogging {
         case Failure(_) => originalSender ! Status.Failure
       }
 
-    case DeleteMatch(id) =>
-      deleteMatch(id)
-      sender() ! MatchDeleted(id)
+    case DeleteMatch(code) =>
+      deleteMatch(code)
+      sender() ! MatchDeleted(code)
   }
 
   def createMatch(): ActorRef = {
@@ -69,14 +69,14 @@ class Matches() extends Actor with ActorLogging {
     newMatch
   }
 
-  def deleteMatch(id: Long) {
+  def deleteMatch(code: Long) {
     state = state.copy(matches = state.matches.filterNot {
-      case (anId, _) => anId == id
+      case (anId, _) => anId == code
     })
   }
 
-  def getMatch(id: Long): Option[ActorRef] = {
-    state.matches.get(id)
+  def getMatch(code: Long): Option[ActorRef] = {
+    state.matches.get(code)
   }
 
   def getMatches: Future[List[MatchState]] = {

@@ -27,12 +27,12 @@ trait MatchRoutes {
 
   def matchRoutes: Route =
     pathPrefix("match" / LongNumber) {
-      id =>
-        val futureMatch = (matches ? GetMatch(id)).mapTo[Option[ActorRef]]
+      code =>
+        val futureMatch = (matches ? GetMatch(code)).mapTo[Option[ActorRef]]
         get {
           val futureMatchState = futureMatch.flatMap {
             case Some(aMatch) => (aMatch ? GetState).mapTo[MatchState]
-            case None => throw new MatchNotFoundException(id)
+            case None => throw new MatchNotFoundException(code)
           }
           completeWithMatch(futureMatchState)
         } ~ (put & parameter("position".as[Int])) {
@@ -42,7 +42,7 @@ trait MatchRoutes {
                 case state: MatchState => Future.successful(state)
                 case t: Throwable => throw t
               }
-              case None => throw new MatchNotFoundException(id)
+              case None => throw new MatchNotFoundException(code)
             }
             completeWithMatch(futureMatchState)
         }
