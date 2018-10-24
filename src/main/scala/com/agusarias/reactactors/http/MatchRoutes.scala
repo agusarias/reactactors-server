@@ -8,12 +8,12 @@ import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
 import com.agusarias.reactactors.Match.{GetState, MakeMove}
-import com.agusarias.reactactors.MatchState
+import com.agusarias.reactactors.{MatchNotFoundException, MatchState}
 import com.agusarias.reactactors.Matches.{CreateMatch, GetMatch, GetMatches}
 import com.agusarias.reactactors.http.MatchJsonProtocol._
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 
 trait MatchRoutes {
@@ -32,14 +32,17 @@ trait MatchRoutes {
         get {
           val futureMatchState = futureMatch.flatMap {
             case Some(aMatch) => (aMatch ? GetState).mapTo[MatchState]
-            case None => throw new Exception("Not found")
+            case None => throw new MatchNotFoundException(id)
           }
           completeWithMatch(futureMatchState)
         } ~ (put & parameter("position".as[Int])) {
           position =>
             val futureMatchState = futureMatch.flatMap {
-              case Some(aMatch) => (aMatch ? MakeMove(position)).mapTo[MatchState]
-              case None => throw new Exception("Not found")
+              case Some(aMatch) => (aMatch ? MakeMove(position)).flatMap {
+                case state: MatchState => Future.successful(state)
+                case t: Throwable => throw t
+              }
+              case None => throw new MatchNotFoundException(id)
             }
             completeWithMatch(futureMatchState)
         }
@@ -61,7 +64,7 @@ trait MatchRoutes {
   def completeWithMatch(futureMatchState: Future[MatchState]): Route = {
     onComplete(futureMatchState) {
       case Success(matchState) => complete(matchState)
-      case Failure(e) => complete(StatusCodes.NotFound, e.getMessage)
+      case Failure(e) => throw e
     }
   }
 }

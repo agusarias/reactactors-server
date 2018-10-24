@@ -20,7 +20,7 @@ class BoardSpec extends FlatSpec with Matchers {
   }
 
   it should "not allow repeated positions" in {
-    a[AssertionError] should be thrownBy {
+    a[InvalidMoveException] should be thrownBy {
       Board.empty
         .update(0, Circle)
         .update(0, Circle)
@@ -28,10 +28,10 @@ class BoardSpec extends FlatSpec with Matchers {
   }
 
   it should "not allow non existent positions" in {
-    a[AssertionError] should be thrownBy {
+    a[InvalidMoveException] should be thrownBy {
       Board.empty.update(-1, Circle)
     }
-    a[AssertionError] should be thrownBy {
+    a[InvalidMoveException] should be thrownBy {
       Board.empty.update(100, Circle)
     }
   }

@@ -3,12 +3,14 @@ package com.agusarias.reactactors
 import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
-import com.agusarias.reactactors.http.MatchRoutes
+import com.agusarias.reactactors.http.{MatchExceptionHandler, MatchRoutes}
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
 
-object Main extends App with MatchRoutes {
+object Main extends App
+  with MatchRoutes
+  with MatchExceptionHandler {
   override implicit val system: ActorSystem = ActorSystem("reactactors")
   override implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val materializer: ActorMaterializer = ActorMaterializer()
