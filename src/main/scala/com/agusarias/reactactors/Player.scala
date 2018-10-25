@@ -1,27 +1,27 @@
 package com.agusarias.reactactors
 
-abstract case class Player(niceName: String) {
+abstract case class Player(code: Int, niceName: String) {
   def other: Player
 
   override def toString: String = niceName
 }
 
 object Player {
-  def of(name: String): Player = name match {
-    case "X" => Cross
-    case "O" => Circle
+  def of(code: Int): Player = code match {
+    case 2 => Cross
+    case 1 => Circle
     case _ => NoPlayer
   }
 }
 
-object Cross extends Player("X") {
+object Cross extends Player(2, "X") {
   override def other: Circle.type = Circle
 }
 
-object Circle extends Player("O") {
+object Circle extends Player(1, "O") {
   override def other: Player = Cross
 }
 
-object NoPlayer extends Player("-") {
+object NoPlayer extends Player(0, "-") {
   override def other: Player = NoPlayer
 }

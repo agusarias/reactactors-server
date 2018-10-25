@@ -49,3 +49,5 @@ case class MatchState(code: Long, board: Board, next: Player, winner: Player) {
 }
 
 class MatchNotFoundException(code: Long) extends Exception(s"Match with code $code not found")
+
+case class Movement(position: Int)
