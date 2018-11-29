@@ -14,7 +14,7 @@ object Main extends App
   with CorsHandler {
   override implicit val system: ActorSystem = ActorSystem("reactactors")
   override implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
+  override implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   override val matches: ActorRef = system.actorOf(Matches.props, "MatchesSupervisor")
 

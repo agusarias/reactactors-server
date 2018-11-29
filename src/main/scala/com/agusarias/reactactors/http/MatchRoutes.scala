@@ -5,6 +5,7 @@ import akka.event.Logging
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
+import akka.stream.Materializer
 import akka.util.Timeout
 import com.agusarias.reactactors.Match.{GetState, MakeMove}
 import com.agusarias.reactactors.Matches.{CreateMatch, GetMatch, GetMatches}
@@ -16,6 +17,7 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 
 trait MatchRoutes {
   implicit def system: ActorSystem
+  implicit def materializer: Materializer
 
   implicit val executionContext: ExecutionContextExecutor
   implicit val timeout: Timeout = Timeout(400.millis)
@@ -26,16 +28,22 @@ trait MatchRoutes {
   def matchRoutes: Route =
     pathPrefix("match" / LongNumber) {
       code =>
-        val futureMatch = (matches ? GetMatch(code)).mapTo[Option[ActorRef]]
-        get {
-          val futureMatchState = futureMatch.flatMap {
+        val futureMaybeMatch = (matches ? GetMatch(code)).mapTo[Option[ActorRef]]
+        pathPrefix("stream") {
+          val futureMatch = futureMaybeMatch.map {
+            case Some(aMatch) => aMatch
+            case None => throw new MatchNotFoundException(code)
+          }
+          handleWebSocketMessages(MatchStream.create(futureMatch))
+        } ~ get {
+          val futureMatchState = futureMaybeMatch.flatMap {
             case Some(aMatch) => (aMatch ? GetState).mapTo[MatchState]
             case None => throw new MatchNotFoundException(code)
           }
           complete(futureMatchState)
         } ~ (put & entity(as[Movement])) {
           movement =>
-            val futureMatchState = futureMatch.flatMap {
+            val futureMatchState = futureMaybeMatch.flatMap {
               case Some(aMatch) => (aMatch ? MakeMove(movement.position)).flatMap {
                 case state: MatchState => Future.successful(state)
                 case e: InvalidMoveException => throw e
