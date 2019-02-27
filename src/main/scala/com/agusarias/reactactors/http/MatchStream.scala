@@ -43,19 +43,18 @@ object MatchStream {
 object MatchStateFormat {
   private def formatBoard(board: Board): String = {
     board.positions
-      .foldLeft("[")(_ + _.code + "," )
-      .reverse
+      .foldLeft("[")(_ + "," + _.code)
       .replaceFirst(",", "")
-      .reverse
       .concat("]")
   }
 
+  // TODO unify this with the MatchJsonProtocol code.
   def apply(matchState: MatchState): String = {
     s"""{
-      |   "code": ${matchState.code},
-      |    "board": ${formatBoard(matchState.board)},
-      |    "next": ${matchState.next.code},
-      |    "winner": ${matchState.winner.code}
-      | }""".stripMargin
+       |   "code": ${matchState.code},
+       |   "board": ${formatBoard(matchState.board)},
+       |   "next": ${matchState.next.code},
+       |   "winner": ${matchState.winner.code}
+       | }""".stripMargin
   }
 }
